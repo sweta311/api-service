@@ -12,7 +12,7 @@ This repository contains the complete solution for a technical assessment design
 *   **CI/CD:** GitHub Actions
 *   **Deployment:** Kubernetes, Helm
 *   **Policy & Governance:** Open Policy Agent (OPA) Gatekeeper
-
+*   **advanced optimizations:** advanced optimizations
 ---
 
 ## Table of Contents
@@ -24,6 +24,7 @@ This repository contains the complete solution for a technical assessment design
 *   [Task 4: Create a Helm Chart](#task-4-create-a-helm-chart)
 *   [Task 5: Deploy to Kubernetes with OPA](#task-5-deploy-to-kubernetes-with-opa)
 *   [Task 6: Documentation](#task-6-documentation)
+*   [Task 7: advanced optimizations](#task-7-documentation)
 
 ---
 
@@ -195,7 +196,6 @@ kubectl apply -f invalid-deployment.yaml -n dev
 # The path to the chart is specified here
 helm install assessment-api-service  --namespace dev
 
----
 
 ## Task 7: Workflow Optimization and Automation
 
