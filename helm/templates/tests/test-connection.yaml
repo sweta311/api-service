@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "assessment-api-service.fullname" . }}-test-connection"
+  labels:
+    {{- include "assessment-api-service.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: curl-test
+      image: "{{ .Values.test.image.repository }}:{{ .Values.test.image.tag }}"
+      command: ["sh", "-c"]
+      args:
+        - |
+          set -ex
+
+          SERVICE_NAME="{{ include "assessment-api-service.fullname" . }}"
+          NAMESPACE="{{ .Release.Namespace }}"
+          SERVICE_PORT="{{ .Values.service.port }}"
+          ENDPOINT="http://${SERVICE_NAME}.${NAMESPACE}.svc.cluster.local:${SERVICE_PORT}/metrics"
+
+          echo "Testing endpoint: $ENDPOINT"
+
+          for i in 1 2 3 4 5; do
+            if curl --fail --silent --show-error "$ENDPOINT"; then
+              echo "Test connection successful on attempt $i!"
+              exit 0
+            fi
+            echo "Attempt $i failed, retrying in 2 seconds..."
+            sleep 2
+          done
+
+          echo "All connection attempts failed."
+          exit 1
+  restartPolicy: Never

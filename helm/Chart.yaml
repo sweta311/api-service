@@ -1,0 +1,6 @@
+apiVersion: v2
+name: assessment-api-service
+description: A Helm chart for deploying the Request Inspector FastAPI service.
+type: application
+version: 0.1.0
+appVersion: "v1"
