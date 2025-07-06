@@ -1,0 +1,40 @@
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8srequiredpolicies
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sRequiredPolicies
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8srequiredpolicies
+
+        # Rule 1: Deny if using the default service account
+        violation[{"msg": msg}] {
+          input.review.object.kind == "Deployment"
+          spec := input.review.object.spec.template.spec
+          not has_field(spec, "serviceAccountName")
+          msg := "Deployments must specify a non-default serviceAccountName"
+        }
+        violation[{"msg": msg}] {
+          input.review.object.kind == "Deployment"
+          spec := input.review.object.spec.template.spec
+          spec.serviceAccountName == "default"
+          msg := "Deployments must not use the 'default' serviceAccountName"
+        }
+
+        # Rule 2: Deny if a container is configured to run as root
+        violation[{"msg": msg}] {
+          input.review.object.kind == "Deployment"
+          container := input.review.object.spec.template.spec.containers[_]
+          not container.securityContext.runAsNonRoot == true
+          msg := sprintf("Container '%v' must set securityContext.runAsNonRoot to true", [container.name])
+        }
+
+        # Helper function
+        has_field(obj, field) = true {
+          _ = obj[field]
+        }
