@@ -1,0 +1,30 @@
+
+schemaVersion: '2.0.0'
+
+metadataTest:
+  exposedPorts: ["8080"]
+  user: "nonroot"
+  workdir: "/app"
+  cmd: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
+
+fileExistenceTests:
+  - name: 'Check for main.py'
+    path: '/app/main.py'
+    shouldExist: true
+  - name: 'Check for requirements.txt'
+    path: '/app/requirements.txt'
+    shouldExist: true
+
+commandTests:
+  - name: "Check python version"
+    command: "python"
+    args: ["--version"]
+    expectedOutput: ["Python 3.11.*"]
+
+  - name: "API Health Check"
+    command: "sh"
+    args:
+      - "-c"
+      - "sleep 5 && curl -s http://localhost:8080/api"
+    expectedOutput:
+      - "Welcome to our demo API"
