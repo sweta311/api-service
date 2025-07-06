@@ -195,7 +195,7 @@ kubectl apply -f invalid-deployment.yaml -n dev
 
 # The path to the chart is specified here
 helm install assessment-api-service  --namespace dev
-
+    ```
 
 ## Task 7: Workflow Optimization and Automation
 
